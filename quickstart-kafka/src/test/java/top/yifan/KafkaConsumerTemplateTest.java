@@ -19,7 +19,7 @@ public class KafkaConsumerTemplateTest {
         String groupId = "5823657659514547373";
         String clientId = "star-0";
         KafkaConsumerTemplate kafkaConsumerTemplate = new KafkaConsumerTemplate(servers, groupId, clientId);
-        kafkaConsumerTemplate.subscribe(Collections.singletonList("ndhc_gdev_gdev_s7cwldb01_ndhc_sourcedb_dbo_test_binary_glaxfhlt"));
+        kafkaConsumerTemplate.subscribe(Collections.singletonList("test_star"));
 
         try {
             while (true) {

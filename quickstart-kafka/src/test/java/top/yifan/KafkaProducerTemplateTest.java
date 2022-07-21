@@ -18,7 +18,7 @@ public class KafkaProducerTemplateTest {
                 new KafkaProducerTemplate("localhost:8092");
         User user = new User("star", "45");
         ListenableFuture<SendResult<String, String>> future =
-                producerTemplate.send("ndhc_gdev_gdev_s7cwldb01_ndhc_sourcedb_dbo_test_binary_glaxfhlt", 0, JSON.toJSONString(user));
+                producerTemplate.send("test_star", 0, JSON.toJSONString(user));
         try {
             future.get();
         } catch (InterruptedException e) {
