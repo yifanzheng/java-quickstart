@@ -61,9 +61,8 @@ public class KafkaAdminTemplate implements Closeable {
      * 过期数据的压缩方式，如果上面选项为压缩的话才有效
      * topicConfig.put(TopicConfig.COMPRESSION_TYPE_CONFIG,"snappy");
      * <p>
-     * The amount of
-     * time to retain delete tombstone markers for log compacted topics. This
-     * setting also gives a bound on the time in which a consumer must complete a
+     * The amount of time to retain delete tombstone markers for log compacted topics.
+     * This setting also gives a bound on the time in which a consumer must complete a
      * read if they begin from offset 0 to ensure that they get a valid snapshot of
      * the final stage (otherwise delete tombstones may be collected before they
      * complete their scan). 默认1天
