@@ -80,6 +80,8 @@ public class KafkaConsumerTemplate {
         configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         configs.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        configs.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 50); // default: 500
+        configs.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 600000); // default: 300000(300s, 5min)
         configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         configs.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);

@@ -5,6 +5,8 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.NoOffsetForPartitionException;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
@@ -135,7 +137,7 @@ public class KafkaAdminTemplate implements Closeable {
             KafkaConsumer<String, String> consumer = null;
             String clientId = getClientId();
             try {
-                consumer = buildKafkaConsumer(clientId);
+                consumer = buildKafkaConsumer(QUERY_END_OFFSET_GROUP_ID, clientId);
                 List<PartitionInfo> allPartitions = consumer.partitionsFor(topic);
                 if (CollectionUtils.isEmpty(allPartitions)) {
                     return Collections.emptyList();
@@ -234,6 +236,96 @@ public class KafkaAdminTemplate implements Closeable {
         }
     }
 
+    /**
+     * 如果偏移量不存在或者超过了当前分区的范围，则将其重置为当前分区的开始位置。
+     * @param topic    topic名称
+     * @param groupId  groupID
+     * @return 如果执行了重置偏移量操作则返回true，否则返回false
+     */
+    public boolean seekToBeginningIfNoOffsetOrOutOfRange(String topic, String groupId) {
+        return this.resetOffsetIfOrOutOfRange( topic, groupId, -1);
+    }
+
+    /**
+     * 如果偏移量不存在或者超过了当前分区的范围，则将其重置为当前分区的开始位置。
+     *
+     * @param endpoint 集群位置
+     * @param topic    topic名称
+     * @param groupId  groupID
+     * @return 如果执行了重置偏移量操作则返回true，否则返回false
+     */
+    public boolean seekToEndIfNoOffsetOrOutOfRange(String endpoint, String topic, String groupId) {
+        return this.resetOffsetIfOrOutOfRange(topic, groupId, 1);
+    }
+
+    /**
+     * 重置指定topic group的offset
+     *
+     * @param topic          topic名称
+     * @param groupId        groupID
+     * @param beginningOrEnd 如果大于0，则重置为end，否则充值为beginning
+     * @return 如果执行了重置偏移量操作则返回true，否则返回false
+     */
+    private boolean resetOffsetIfOrOutOfRange(String topic, String groupId, int beginningOrEnd) {
+        SingleObject<Boolean> isUpdated = SingleObject.build(false);
+        KafkaConsumer<String, String> consumer = null;
+        String clientId = getClientId();
+        try {
+            consumer = buildKafkaConsumer(groupId, clientId);
+            List<PartitionInfo> allPartitions = consumer.partitionsFor(topic);
+            List<TopicPartition> topicPartitions = allPartitions.stream()
+                    .map(e -> new TopicPartition(topic, e.partition()))
+                    .collect(Collectors.toList());
+            consumer.assign(topicPartitions);
+            final KafkaConsumer<String, String> finalConsumer = consumer;
+            topicPartitions.forEach(e -> {
+                if (isOutOfRange(finalConsumer, e)) {
+                    Map<TopicPartition, Long> newOffsets;
+                    if (beginningOrEnd <= 0) {
+                        newOffsets = finalConsumer.beginningOffsets(Collections.singletonList(e));
+                    } else {
+                        newOffsets = finalConsumer.endOffsets(Collections.singletonList(e));
+                    }
+                    newOffsets.forEach((k, v) -> {
+                        Map<TopicPartition, OffsetAndMetadata> commits = Collections.singletonMap(
+                                new TopicPartition(topic, k.partition()),
+                                new OffsetAndMetadata(v));
+                        finalConsumer.commitSync(commits);
+                    });
+                    isUpdated.set(true);
+                }
+            });
+        } finally {
+            if (consumer != null) {
+                consumer.close(Duration.ofSeconds(30));
+            }
+            this.freeClientId(clientId);
+        }
+        return isUpdated.get();
+    }
+
+    private boolean isOutOfRange(KafkaConsumer<?, ?> consumer, TopicPartition topicPartition) {
+        try {
+            long position = consumer.position(topicPartition);
+            Map<TopicPartition, Long> beginningOffsets = consumer.beginningOffsets(Collections.singletonList(topicPartition));
+            Map<TopicPartition, Long> endOffsets = consumer.endOffsets(Collections.singletonList(topicPartition));
+
+            for (Map.Entry<TopicPartition, Long> entry : beginningOffsets.entrySet()) {
+                if (position < entry.getValue()) {
+                    return true;
+                }
+            }
+            for (Map.Entry<TopicPartition, Long> entry : endOffsets.entrySet()) {
+                if (position > entry.getValue()) {
+                    return true;
+                }
+            }
+        } catch (NoOffsetForPartitionException e) {
+            return true;
+        }
+        return false;
+    }
+
     private AdminClient buildAdminClient(String bootstrapServers, long requestTimeoutMs) {
         Properties properties = new Properties();
         properties.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -243,10 +335,10 @@ public class KafkaAdminTemplate implements Closeable {
         return AdminClient.create(properties);
     }
 
-    private KafkaConsumer<String, String> buildKafkaConsumer(String clientId) {
+    private KafkaConsumer<String, String> buildKafkaConsumer(String groupId, String clientId) {
         Properties prop = new Properties();
         prop.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
-        prop.put(ConsumerConfig.GROUP_ID_CONFIG, QUERY_END_OFFSET_GROUP_ID);
+        prop.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, this.bootstrapServers);
         prop.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
         prop.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");

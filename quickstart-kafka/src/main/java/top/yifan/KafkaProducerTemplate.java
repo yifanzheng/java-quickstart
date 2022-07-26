@@ -58,7 +58,7 @@ public class KafkaProducerTemplate {
     private KafkaTemplate<String, String> createConservativeKafkaTemplate(String bootstrapServers) {
         Map<String, Object> configs = new HashMap<>();
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        configs.put(ProducerConfig.ACKS_CONFIG, "-1"); // 所有消息同步到slave节点后才会返回成功的确认消息给客户端。
+        configs.put(ProducerConfig.ACKS_CONFIG, "all"); // 所有消息同步到slave节点后才会返回成功的确认消息给客户端。
         configs.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 10485760); // set to 10MB, default: 1MB
         configs.put(ProducerConfig.BATCH_SIZE_CONFIG, 0);
         configs.put(ProducerConfig.RETRIES_CONFIG, 3);
