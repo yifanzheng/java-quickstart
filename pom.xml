@@ -12,6 +12,8 @@
     <modules>
         <module>quickstart-kafka</module>
         <module>quickstart-etcd</module>
+        <module>quickstart-resttemplate</module>
+        <module>quickstart-elasticsearch</module>
     </modules>
 
     <properties>

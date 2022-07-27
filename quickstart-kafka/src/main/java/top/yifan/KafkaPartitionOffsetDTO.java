@@ -1,5 +1,7 @@
 package top.yifan;
 
+import top.yifan.entity.BaseObject;
+
 /**
  * KafkaPartitionOffsetDTO
  *

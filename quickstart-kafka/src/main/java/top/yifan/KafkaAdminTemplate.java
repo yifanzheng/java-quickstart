@@ -14,6 +14,7 @@ import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.util.CollectionUtils;
+import top.yifan.entity.SingleObject;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -238,12 +239,13 @@ public class KafkaAdminTemplate implements Closeable {
 
     /**
      * 如果偏移量不存在或者超过了当前分区的范围，则将其重置为当前分区的开始位置。
-     * @param topic    topic名称
-     * @param groupId  groupID
+     *
+     * @param topic   topic名称
+     * @param groupId groupID
      * @return 如果执行了重置偏移量操作则返回true，否则返回false
      */
     public boolean seekToBeginningIfNoOffsetOrOutOfRange(String topic, String groupId) {
-        return this.resetOffsetIfOrOutOfRange( topic, groupId, -1);
+        return this.resetOffsetIfOrOutOfRange(topic, groupId, -1);
     }
 
     /**

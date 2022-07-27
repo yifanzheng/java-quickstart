@@ -1,4 +1,4 @@
-package top.yifan;
+package top.yifan.entity;
 
 /**
  * @author sz7v

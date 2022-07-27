@@ -9,20 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>quickstart-etcd</artifactId>
+    <artifactId>quickstart-elasticsearch</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <jetcd.version>0.5.0</jetcd.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>io.etcd</groupId>
-            <artifactId>jetcd-core</artifactId>
-            <version>${jetcd.version}</version>
-        </dependency>
+
+
     </dependencies>
 
 </project>
