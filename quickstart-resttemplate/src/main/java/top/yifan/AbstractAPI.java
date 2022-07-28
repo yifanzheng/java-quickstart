@@ -3,6 +3,7 @@ package top.yifan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -34,6 +35,7 @@ public abstract class AbstractAPI {
     }
 
     @Autowired
+    @Qualifier("longerRestTemplate")
     public void setLongerRestTemplate(RestTemplate longerRestTemplate) {
         this.longerRestTemplate = longerRestTemplate;
     }
