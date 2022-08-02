@@ -63,9 +63,10 @@ public class KafkaProducerTemplate {
         configs.put(ProducerConfig.BATCH_SIZE_CONFIG, 0);
         configs.put(ProducerConfig.RETRIES_CONFIG, 3);
         configs.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 90 * 1000); // 如果90s的时间内没有新的数据发送，则断开链接
-        configs.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
+        configs.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip"); // 默认 none， 可选 GZIP、Snappy、LZ4、zstd(压缩比高)
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configs.put(ProducerConfig.METADATA_MAX_AGE_CONFIG, 60 * 1000); // 强制刷新元数据时间间隔, 60s
 
         return createKafkaTemplate(configs);
     }

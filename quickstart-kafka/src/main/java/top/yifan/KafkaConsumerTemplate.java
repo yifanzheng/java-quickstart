@@ -79,7 +79,7 @@ public class KafkaConsumerTemplate {
         configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         configs.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-        configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // 设置 earliest 可以避免新增分区时的消息丢失问题。default: latest，
         configs.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 50); // default: 500
         configs.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 600000); // default: 300000(300s, 5min)
         configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
