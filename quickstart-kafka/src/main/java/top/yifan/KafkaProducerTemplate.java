@@ -68,6 +68,9 @@ public class KafkaProducerTemplate {
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configs.put(ProducerConfig.METADATA_MAX_AGE_CONFIG, 60 * 1000); // 强制刷新元数据时间间隔, 60s
 
+        // 注册拦截器
+        // configs.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, Lists.newArrayList("top.yifan.interceptor.KafkaProducerInterceptor"));
+
         return createKafkaTemplate(configs);
     }
 
