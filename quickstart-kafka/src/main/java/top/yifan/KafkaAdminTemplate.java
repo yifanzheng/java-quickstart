@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 public class KafkaAdminTemplate implements Closeable {
 
-    private static final long DEFAULT_TIMEOUT_MS = 30000;
+    private static final int DEFAULT_TIMEOUT_MS = 30000;
     private static final String QUERY_END_OFFSET_GROUP_ID = "query_end_offset_group_id";
 
     private final String bootstrapServers;
@@ -44,7 +44,7 @@ public class KafkaAdminTemplate implements Closeable {
         this(bootstrapServers, DEFAULT_TIMEOUT_MS);
     }
 
-    public KafkaAdminTemplate(String bootstrapServers, long requestTimeoutMs) {
+    public KafkaAdminTemplate(String bootstrapServers, int requestTimeoutMs) {
         this.bootstrapServers = bootstrapServers;
         this.adminClient = buildAdminClient(bootstrapServers, requestTimeoutMs);
     }
@@ -328,7 +328,7 @@ public class KafkaAdminTemplate implements Closeable {
         return false;
     }
 
-    private AdminClient buildAdminClient(String bootstrapServers, long requestTimeoutMs) {
+    private AdminClient buildAdminClient(String bootstrapServers, int requestTimeoutMs) {
         Properties properties = new Properties();
         properties.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         // 请求超时时间

@@ -60,7 +60,8 @@ public class KafkaProducerTemplate {
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configs.put(ProducerConfig.ACKS_CONFIG, "all"); // 所有消息同步到slave节点后才会返回成功的确认消息给客户端。
         configs.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 10485760); // set to 10MB, default: 1MB
-        configs.put(ProducerConfig.BATCH_SIZE_CONFIG, 0);
+        configs.put(ProducerConfig.BATCH_SIZE_CONFIG, 0); // default: 0
+        configs.put(ProducerConfig.LINGER_MS_CONFIG, 0);
         configs.put(ProducerConfig.RETRIES_CONFIG, 3);
         configs.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 90 * 1000); // 如果90s的时间内没有新的数据发送，则断开链接
         configs.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip"); // 默认 none， 可选 GZIP、Snappy、LZ4、zstd(压缩比高)
