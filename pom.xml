@@ -15,6 +15,7 @@
         <module>quickstart-resttemplate</module>
         <module>quickstart-elasticsearch</module>
         <module>quickstart-util</module>
+        <module>quickstart-datasource-pool</module>
     </modules>
 
     <properties>
