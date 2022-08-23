@@ -1,4 +1,4 @@
-package top.yifan;
+package top.yifan.datasource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -7,6 +7,9 @@ import com.zaxxer.hikari.pool.HikariPool;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.yifan.MD5Util;
+import top.yifan.RDBMSDriverLoader;
+import top.yifan.UnsupportedTypeException;
 
 import javax.management.JMX;
 import javax.management.MBeanServer;
@@ -23,8 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 抽象关系型数据库数据源池
  *
- * @author kent
- * @date 2020/8/8
+ * @author Star Zheng
  */
 public abstract class AbstractRDBMSDataSourcePool {
 
@@ -242,42 +244,4 @@ public abstract class AbstractRDBMSDataSourcePool {
             return false;
         }
     }
-
-    private static class RDBMSConnectionConfigurationWarp implements RDBMSConnectionConfiguration {
-
-        private final RDBMSConnectionConfiguration config;
-        private final String realAddress;
-
-        public RDBMSConnectionConfigurationWarp(RDBMSConnectionConfiguration config, String realAddress) {
-            this.config = config;
-            this.realAddress = realAddress;
-        }
-
-        @Override
-        public RDBMSType getType() {
-            return config.getType();
-        }
-
-        @Override
-        public String getServer() {
-            return realAddress;
-        }
-
-        @Override
-        public String getDatabase() {
-            return config.getDatabase();
-        }
-
-        @Override
-        public String getUsername() {
-            return config.getUsername();
-        }
-
-        @Override
-        public String getPassword() {
-            return config.getPassword();
-        }
-
-    }
-
 }

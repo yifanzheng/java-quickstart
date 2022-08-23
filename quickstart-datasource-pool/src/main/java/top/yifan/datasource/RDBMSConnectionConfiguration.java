@@ -1,4 +1,4 @@
-package top.yifan;
+package top.yifan.datasource;
 
 /**
  * RDBMSConnectionConfiguration
