@@ -21,7 +21,6 @@ public class IPUtil {
     public static final Logger log = LoggerFactory.getLogger(IPUtil.class);
 
     private IPUtil() {
-
     }
 
     /**
@@ -32,20 +31,17 @@ public class IPUtil {
         InetAddress inetAddress = null;
         try {
             boolean isFindIp = false;
-            Enumeration<NetworkInterface> netInterfaces = NetworkInterface
-                    .getNetworkInterfaces();
+            Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
             while (netInterfaces.hasMoreElements()) {
                 if (isFindIp) {
                     break;
                 }
-                NetworkInterface ni = netInterfaces
-                        .nextElement();
+                NetworkInterface ni = netInterfaces.nextElement();
                 Enumeration<InetAddress> inetAddressList = ni.getInetAddresses();
                 while (inetAddressList.hasMoreElements()) {
                     inetAddress = inetAddressList.nextElement();
                     if (!inetAddress.isLoopbackAddress()
-                            && inetAddress.getHostAddress().matches(
-                            "(\\d{1,3}\\.){3}\\d{1,3}")) {
+                            && inetAddress.getHostAddress().matches("(\\d{1,3}\\.){3}\\d{1,3}")) {
                         isFindIp = true;
                         break;
                     }
@@ -67,17 +63,14 @@ public class IPUtil {
         InetAddress ip = null;
         List<String> ipList = new ArrayList<>();
         try {
-            Enumeration<NetworkInterface> netInterfaces = NetworkInterface
-                    .getNetworkInterfaces();
+            Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
             while (netInterfaces.hasMoreElements()) {
-                NetworkInterface ni = netInterfaces
-                        .nextElement();
+                NetworkInterface ni = netInterfaces.nextElement();
                 Enumeration<InetAddress> ips = ni.getInetAddresses();
                 while (ips.hasMoreElements()) {
                     ip = ips.nextElement();
                     if (!ip.isLoopbackAddress()
-                            && ip.getHostAddress().matches(
-                            "(\\d{1,3}\\.){3}\\d{1,3}")) {
+                            && ip.getHostAddress().matches("(\\d{1,3}\\.){3}\\d{1,3}")) {
                         ipList.add(ip.getHostAddress());
                     }
                 }
