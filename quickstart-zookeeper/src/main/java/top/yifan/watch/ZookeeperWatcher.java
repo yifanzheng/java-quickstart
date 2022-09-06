@@ -21,14 +21,14 @@ public class ZookeeperWatcher {
 
     private static final Logger log = LoggerFactory.getLogger(ZookeeperWatcher.class);
 
-    private CuratorFramework client;
+    private final CuratorFramework client;
 
     public ZookeeperWatcher(ZookeeperClient zookeeperClient) {
-        this.client = zookeeperClient.createConnect();
+        this.client = zookeeperClient.getClient();
     }
 
     public Closeable watch(String nodePath) throws Exception {
-        client.start();
+        // 可以监听当前节点下所有节点的事件。如果只是监听某一个节点可以使用 NodeCache
         TreeCache cache = TreeCache.newBuilder(client, nodePath).build();
         cache.getListenable().addListener((client, event) -> {
             if (event.getType() == TreeCacheEvent.Type.INITIALIZED) {
@@ -36,13 +36,11 @@ public class ZookeeperWatcher {
                 return;
             }
             if (event.getData().getPath().equals(nodePath) && event.getType() == TreeCacheEvent.Type.NODE_ADDED) {
-                System.out.println(new String(event.getData().getData()));
-                System.out.println("type=" + event.getType() + " path=" + event.getData().getPath());
+                System.out.println("type=" + event.getType() + " path=" + event.getData().getPath() + " data=" + new String(event.getData().getData()));
                 return;
             }
             if (event.getData().getPath().equals(nodePath) && event.getType() == TreeCacheEvent.Type.NODE_UPDATED) {
-                System.out.println(new String(event.getData().getData()));
-                System.out.println("type=" + event.getType() + " path=" + event.getData().getPath());
+                System.out.println("type=" + event.getType() + " path=" + event.getData().getPath() + " data=" + new String(event.getData().getData()));
                 return;
             }
         });
@@ -52,7 +50,7 @@ public class ZookeeperWatcher {
     }
 
     public Closeable watchChildrenForNodePath(String nodePath) throws Exception {
-        client.start();
+        // 监听所有子节点变化
         PathChildrenCache cache = new PathChildrenCache(client, nodePath, true);
         cache.getListenable().addListener((curatorFramework, event) -> {
             if (event.getType() == PathChildrenCacheEvent.Type.INITIALIZED) {
