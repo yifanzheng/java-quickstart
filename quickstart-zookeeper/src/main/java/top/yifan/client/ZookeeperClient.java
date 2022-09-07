@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +56,12 @@ public class ZookeeperClient implements Closeable {
         zkClient.start();
         try {
             // 阻塞直到连接成功
-            boolean connected = zkClient.blockUntilConnected(10000, TimeUnit.MILLISECONDS);
-            if (!connected) {
-                throw new ZookeeperException("Connect to zookeeper failed with timeout 10000ms");
+            zkClient.blockUntilConnected(10000, TimeUnit.MILLISECONDS);
+            if (!zkClient.getState().equals(CuratorFrameworkState.STARTED)) {
+                throw new IllegalStateException("Zookeeper client initialization failed");
+            }
+            if (!zkClient.getZookeeperClient().isConnected()) {
+                throw new IllegalStateException("Failed to connect to zookeeper server");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
