@@ -6,10 +6,15 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.yifan.NoSuchNodeException;
 import top.yifan.ZookeeperException;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -19,27 +24,54 @@ import java.util.Objects;
  */
 public class ZookeeperTemplate {
 
-    private final ZookeeperClient zookeeperClient;
+    private static final Logger log = LoggerFactory.getLogger(ZookeeperTemplate.class);
+
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
+
+    private final CuratorFramework client;
 
     public ZookeeperTemplate(ZookeeperClient zookeeperClient) {
-        this.zookeeperClient = zookeeperClient;
+        client = zookeeperClient.getClient();
     }
 
-    /**
-     * 创建节点
-     *
-     * @param nodePath   节点路径
-     * @param data       数据
-     * @param createMode 节点类型
-     * @return 节点全路径
-     */
-    public String createNode(String nodePath, String data, CreateMode createMode) {
+    public void createPersistent(String nodePath) {
         try {
-            CuratorFramework client = this.zookeeperClient.getClient();
-            return client.create()
+            client.create().forPath(nodePath);
+        } catch (KeeperException.NodeExistsException e) {
+            log.warn("ZNode [{}] already exists.", nodePath, e);
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    public void createEphemeral(String nodePath) {
+        try {
+            client.create().withMode(CreateMode.EPHEMERAL).forPath(nodePath);
+        } catch (KeeperException.NodeExistsException e) {
+            log.warn("ZNode " + nodePath + " already exists, since we will only try to recreate a node on a session expiration" +
+                    ", this duplication might be caused by a delete delay from the zk server, which means the old expired session" +
+                    " may still holds this ZNode and the server just hasn't got time to do the deletion. In this case, " +
+                    "we can just try to delete and create again.", e);
+            deleteNode(nodePath);
+            createEphemeral(nodePath);
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    public void createPersistent(String nodePath, String data) {
+        byte[] dataBytes = data.getBytes(CHARSET);
+        try {
+            client.create()
                     .creatingParentsIfNeeded()
-                    .withMode(createMode)
-                    .forPath(nodePath, data.getBytes(StandardCharsets.UTF_8));
+                    .forPath(nodePath, dataBytes);
+        } catch (KeeperException.NodeExistsException e) {
+            try {
+                client.setData().forPath(nodePath, dataBytes);
+            } catch (Exception e1) {
+                throw new IllegalStateException(e.getMessage(), e1);
+            }
+            log.warn("ZNode [{}] already exists.", nodePath, e);
         } catch (Exception e) {
             throw new ZookeeperException("Create Zookeeper node[" + nodePath + "] error", e);
         }
@@ -53,13 +85,11 @@ public class ZookeeperTemplate {
      */
     public String getData(String nodePath) {
         try {
-            CuratorFramework client = this.zookeeperClient.getClient();
             byte[] dataBytes = client.getData().forPath(nodePath);
-            return new String(dataBytes, StandardCharsets.UTF_8);
+            return new String(dataBytes, CHARSET);
+        } catch (KeeperException.NoNodeException e) {
+            return null;
         } catch (Exception e) {
-            if (e instanceof KeeperException.NoNodeException) {
-                return null;
-            }
             throw new ZookeeperException("Get Zookeeper node[" + nodePath + "] error", e);
         }
     }
@@ -74,24 +104,29 @@ public class ZookeeperTemplate {
     public Stat setData(String nodePath, String data) {
         Preconditions.checkArgument(StringUtils.isBlank(nodePath), "NodePath cannot be empty");
         try {
-            CuratorFramework client = this.zookeeperClient.getClient();
-            return client.setData().forPath(nodePath, data.getBytes(StandardCharsets.UTF_8));
+            return client.setData().forPath(nodePath, data.getBytes(CHARSET));
+        } catch (KeeperException.NoNodeException e) {
+            throw new NoSuchNodeException("No such config for node path: " + nodePath, e);
         } catch (Exception e) {
-            if (e instanceof KeeperException.NoNodeException) {
-                throw new NoSuchNodeException("No such config for node path: " + nodePath, e);
-            }
             throw new ZookeeperException("Cannot set data for path: " + nodePath, e);
+        }
+    }
+
+    public List<String> getChildren(String path) {
+        try {
+            return client.getChildren().forPath(path);
+        } catch (KeeperException.NoNodeException e) {
+            return Collections.emptyList();
+        } catch (Exception e) {
+            throw new ZookeeperException(e.getMessage(), e);
         }
     }
 
     public void deleteNode(String nodePath) {
         try {
-            CuratorFramework client = this.zookeeperClient.getClient();
             client.delete().deletingChildrenIfNeeded().forPath(nodePath);
+        } catch (KeeperException.NoNodeException ignore) {
         } catch (Exception e) {
-            if (e instanceof KeeperException.NoNodeException) {
-                return;
-            }
             throw new ZookeeperException("Delete Zookeeper node[" + nodePath + "] error", e);
         }
     }
@@ -105,12 +140,13 @@ public class ZookeeperTemplate {
     public boolean isExists(String nodePath) {
         Preconditions.checkArgument(StringUtils.isBlank(nodePath), "NodePath cannot be empty");
         try {
-            CuratorFramework client = this.zookeeperClient.getClient();
-            Stat stat = client.checkExists().forPath(nodePath);
-            return Objects.nonNull(stat);
+            if (client.checkExists().forPath(nodePath) != null) {
+                return true;
+            }
         } catch (Exception e) {
-            throw new ZookeeperException("Cannot check exists for path: " + nodePath, e);
+            log.error("Cannot check exists for path: {}", nodePath, e);
         }
+        return false;
     }
 
 }
