@@ -1,16 +1,15 @@
 package top.yifan.watch;
 
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache;
-import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
-import org.apache.curator.framework.recipes.cache.TreeCache;
-import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
+import org.apache.curator.framework.recipes.cache.*;
 import org.apache.curator.utils.ZKPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.yifan.client.ZookeeperClient;
 
 import java.io.Closeable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ZookeeperWatcher
@@ -64,7 +63,7 @@ public class ZookeeperWatcher {
                 System.out.println("Node changed: " + ZKPaths.getNodeFromPath(event.getData().getPath()));
             }
         });
-        cache.start();
+        cache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
         return cache;
     }
 }

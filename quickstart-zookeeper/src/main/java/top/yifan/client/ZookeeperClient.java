@@ -23,6 +23,9 @@ public class ZookeeperClient implements Closeable {
 
     private static final Logger log = LoggerFactory.getLogger(ZookeeperClient.class);
 
+    private static final int SESSION_TIMEOUT_MS = 30 * 1000;
+    private static final int CONNECTION_TIMEOUT_MS = 10 * 1000;
+
     private final String connectString;
 
     private CuratorFramework client;
@@ -45,9 +48,9 @@ public class ZookeeperClient implements Closeable {
                 // Zookeeper 服务器地址字符串
                 .connectString(connectString)
                 // 会话超时时间
-                .sessionTimeoutMs(30000)
+                .sessionTimeoutMs(SESSION_TIMEOUT_MS)
                 // 连接超时
-                .connectionTimeoutMs(10000)
+                .connectionTimeoutMs(CONNECTION_TIMEOUT_MS)
                 // 重连策略
                 .retryPolicy(retryPolicy)
                 // 命名空间，表示当前客户端的父节点，我们可以用它来做业务区分
@@ -56,7 +59,7 @@ public class ZookeeperClient implements Closeable {
         zkClient.start();
         try {
             // 阻塞直到连接成功
-            zkClient.blockUntilConnected(10000, TimeUnit.MILLISECONDS);
+            zkClient.blockUntilConnected(CONNECTION_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             if (!zkClient.getState().equals(CuratorFrameworkState.STARTED)) {
                 throw new IllegalStateException("Zookeeper client initialization failed");
             }

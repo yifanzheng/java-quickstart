@@ -36,7 +36,7 @@ public class ZookeeperTemplate {
 
     public void createPersistent(String nodePath) {
         try {
-            client.create().forPath(nodePath);
+            client.create().creatingParentsIfNeeded().forPath(nodePath);
         } catch (KeeperException.NodeExistsException e) {
             log.warn("ZNode [{}] already exists.", nodePath, e);
         } catch (Exception e) {
@@ -46,7 +46,9 @@ public class ZookeeperTemplate {
 
     public void createEphemeral(String nodePath) {
         try {
-            client.create().withMode(CreateMode.EPHEMERAL).forPath(nodePath);
+            client.create().creatingParentsIfNeeded()
+                    .withMode(CreateMode.EPHEMERAL)
+                    .forPath(nodePath);
         } catch (KeeperException.NodeExistsException e) {
             log.warn("ZNode " + nodePath + " already exists, since we will only try to recreate a node on a session expiration" +
                     ", this duplication might be caused by a delete delay from the zk server, which means the old expired session" +
