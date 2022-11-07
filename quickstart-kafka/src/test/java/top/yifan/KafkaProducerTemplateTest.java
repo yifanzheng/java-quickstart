@@ -16,10 +16,10 @@ public class KafkaProducerTemplateTest {
     @Test
     public void testSend() {
         KafkaProducerTemplate producerTemplate =
-                new KafkaProducerTemplate("localhost:8092");
+                new KafkaProducerTemplate("localhost:9092");
         User user = new User("star", "45");
         ListenableFuture<SendResult<String, String>> future =
-                producerTemplate.send("test_star", 0, JSON.toJSONString(user));
+                producerTemplate.send("quickstart", 0, JSON.toJSONString(user));
         try {
             future.get();
         } catch (InterruptedException e) {
