@@ -3,7 +3,7 @@ package top.yifan;
 /**
  * NoSuchNodeException
  *
- * @author sz7v
+ * @author Star Zheng
  */
 public class NoSuchNodeException extends RuntimeException {
 

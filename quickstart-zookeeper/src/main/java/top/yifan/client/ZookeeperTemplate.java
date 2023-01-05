@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * ZookeeperTemplate
  *
- * @author sz7v
+ * @author Star Zheng
  */
 public class ZookeeperTemplate {
 

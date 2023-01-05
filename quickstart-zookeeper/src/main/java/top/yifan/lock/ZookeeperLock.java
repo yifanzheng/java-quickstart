@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * ZookeeperLock
  *
- * @author sz7v
+ * @author Star Zheng
  */
 public class ZookeeperLock {
 

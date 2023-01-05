@@ -1,7 +1,7 @@
 package top.yifan;
 
 /**
- * @author sz7v
+ * @author Star Zheng
  */
 public class ZookeeperException extends RuntimeException {
 

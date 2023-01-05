@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * ZookeeperClient
  *
- * @author sz7v
+ * @author Star Zheng
  */
 public class ZookeeperClient implements Closeable {
 

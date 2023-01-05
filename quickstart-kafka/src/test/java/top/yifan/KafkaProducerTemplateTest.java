@@ -9,7 +9,9 @@ import top.yifan.entity.User;
 import java.util.concurrent.ExecutionException;
 
 /**
- * @author sz7v
+ * KafkaProducerTemplateTest
+ *
+ * @author Star Zheng
  */
 public class KafkaProducerTemplateTest {
 

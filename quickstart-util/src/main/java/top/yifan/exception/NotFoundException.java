@@ -6,7 +6,7 @@ import org.zalando.problem.Status;
 /**
  * NotFoundException
  *
- * @author sz7v
+ * @author Star Zheng
  */
 public class NotFoundException extends AbstractThrowableProblem {
 

@@ -9,7 +9,7 @@ import java.util.Collections;
 /**
  * KafkaConsumerTemplateTest
  *
- * @author sz7v
+ * @author Star Zheng
  */
 public class KafkaConsumerTemplateTest {
 

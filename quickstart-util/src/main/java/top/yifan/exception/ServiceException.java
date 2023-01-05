@@ -1,7 +1,7 @@
 package top.yifan.exception;
 
 /**
- * @author sz7v
+ * @author Star Zheng
  */
 public class ServiceException extends RuntimeException {
 

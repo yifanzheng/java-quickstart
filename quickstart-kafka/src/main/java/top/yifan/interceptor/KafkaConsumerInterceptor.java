@@ -8,7 +8,7 @@ import org.apache.kafka.common.TopicPartition;
 import java.util.Map;
 
 /**
- * @author sz7v
+ * @author Star Zheng
  */
 public class KafkaConsumerInterceptor implements ConsumerInterceptor<String, String> {
 

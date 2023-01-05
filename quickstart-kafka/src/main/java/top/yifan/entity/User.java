@@ -1,7 +1,7 @@
 package top.yifan.entity;
 
 /**
- * @author sz7v
+ * @author Star Zheng
  */
 public class User {
 
