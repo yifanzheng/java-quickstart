@@ -2,8 +2,6 @@ package top.yifan;
 
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * URLUtil
  *
@@ -14,7 +12,7 @@ public class URLUtil {
     private URLUtil() {
     }
 
-    public static String fullURL(@NotNull String endpoint, @NotNull String uri) {
+    public static String fullURL(String endpoint, String uri) {
         Assert.notNull(endpoint, "Endpoint can't be null");
         Assert.notNull(uri, "URI can't be null");
 
