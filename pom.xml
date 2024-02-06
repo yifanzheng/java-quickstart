@@ -17,6 +17,7 @@
         <module>quickstart-util</module>
         <module>quickstart-datasource-pool</module>
         <module>quickstart-zookeeper</module>
+        <module>quickstart-mybatis</module>
     </modules>
 
     <properties>
