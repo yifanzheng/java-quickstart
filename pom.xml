@@ -18,6 +18,7 @@
         <module>quickstart-datasource-pool</module>
         <module>quickstart-zookeeper</module>
         <module>quickstart-mybatis</module>
+        <module>quickstart-upload</module>
     </modules>
 
     <properties>
@@ -52,6 +53,11 @@
             <dependency>
                 <groupId>top.yifan</groupId>
                 <artifactId>quickstart-util</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>top.yifan</groupId>
+                <artifactId>quickstart-upload</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
