@@ -1,9 +1,9 @@
 package top.yifan;
 
 
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +24,7 @@ public class DateUtils {
      * @return 返回按天拆分的时间区间集合
      */
     public static List<Pair<Date, Date>> getIntervalDateByDaily(Date start, Date end) {
-        List<Pair<Date, Date>> dateIntervalList = Lists.newArrayList();
+        List<Pair<Date, Date>> dateIntervalList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(start);
         while (calendar.getTimeInMillis() < end.getTime()) {

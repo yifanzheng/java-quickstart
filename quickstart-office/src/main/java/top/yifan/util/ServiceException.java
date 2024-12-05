@@ -1,4 +1,4 @@
-package top.yifan.exception;
+package top.yifan.util;
 
 /**
  * @author Star Zheng

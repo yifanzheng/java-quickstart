@@ -1,4 +1,4 @@
-package top.yifan.exception;
+package top.yifan.util;
 
 import org.zalando.problem.AbstractThrowableProblem;
 import org.zalando.problem.Status;
