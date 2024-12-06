@@ -1,6 +1,5 @@
 package top.yifan;
 
-import cn.hutool.core.thread.ThreadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,7 @@ public class RetryableConnection implements AutoCloseable {
     }
 
     public <R> R execute(ExecuteSQLFunction<R> fun, int numRetries)
-            throws SQLException {
+            throws SQLException, InterruptedException {
         return this.execute(fun, numRetries, -1);
     }
 
@@ -53,7 +52,7 @@ public class RetryableConnection implements AutoCloseable {
      * @throws SQLException - 如果执行的过程成发生任何SQL异常，则将抛出此异常
      */
     public <R> R execute(ExecuteSQLFunction<R> fun, int numRetries, int intervalTime)
-            throws SQLException {
+            throws SQLException, InterruptedException {
         int times = 0;
         long sleepTime = intervalTime <= 0 ? INIT_INTERVAL_TIME : intervalTime;
         for (; ; ) {
@@ -84,7 +83,7 @@ public class RetryableConnection implements AutoCloseable {
                                 e.getErrorCode(), times, numRetries, MIN_RETRIES, sleepTime, conn.getMetaData().getURL(), e.getMessage());
                     }
 
-                    ThreadUtil.sleep(sleepTime);
+                    Thread.sleep(sleepTime);
                     // 睡眠完成后需要再次检测是否已经中断，因为在睡眠期间可能发生中断操作
                     if (isInterrupted(fun)) {
                         throw e;
