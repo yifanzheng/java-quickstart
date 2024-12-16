@@ -95,8 +95,8 @@ public class FileService {
 
                 String fileId = currentTimeMillis + "_" + targetName + "." + type;
 
-                // 记录文件
-                // 保存记录到数据库里
+                // TODO: 记录文件
+                // TODO: 保存记录到数据库里
                 // 返回结果：包含图片的名称和访问路径
                 fileIdList.add(fileId);
             }
