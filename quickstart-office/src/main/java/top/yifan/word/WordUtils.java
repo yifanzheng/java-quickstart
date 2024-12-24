@@ -12,9 +12,9 @@ import java.util.Map;
  *
  * @author zhengyifan
  */
-public class WordTools {
+public class WordUtils {
 
-    private WordTools() {
+    private WordUtils() {
     }
 
     /**

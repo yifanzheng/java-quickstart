@@ -50,6 +50,11 @@
             <artifactId>itextpdf</artifactId>
             <version>5.5.13.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext7-core</artifactId>
+            <version>7.2.5</version>
+        </dependency>
         <!-- ./ PDF 解析工具 -->
         <!-- ofd 解析工具 -->
         <dependency>
